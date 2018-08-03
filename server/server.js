@@ -13,6 +13,14 @@ const express = require("express"),
 
 app.use(express.static(pathName));
 
+io.on("connection", function (socket) {
+    console.log("new user connected");
+
+    socket.on("disconnect", ()=>{
+        console.log("User disconnected from server");
+    })
+});
+
 server.listen(http_PORT, ()=>{
     console.log(`Server is up on ${http_PORT}`)
 });
