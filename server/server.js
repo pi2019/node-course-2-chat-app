@@ -18,6 +18,20 @@ io.on("connection", function (socket) {
     numberOfUsers++;
     console.log(`currently there are ${numberOfUsers} users`);
 
+    //server side EMITS newMessageEvent and client side EMITS createMessageEvent
+
+    //WElCOME MESSAGE FROM SERVER to the user who just logged in
+    socket.emit("newMessageEvent", {
+        from: "admin",
+        text: "welcome"
+    });
+
+    //WElCOME MESSAGE FROM SERVER to all the other users notifying them that a new user has connected
+    socket.broadcast.emit("newMessageEvent", {
+        from: "Admin",
+        text: "A new user just joined"
+    });
+
     socket.on("disconnect", function () {
         console.log("User disconnected from server");
         numberOfUsers--;
@@ -25,14 +39,14 @@ io.on("connection", function (socket) {
     });
 
     //new EMAIL EVENTS
-    socket.emit("newEmail", {
-        "from": "peshotan irani",
-        subject: "cool bro"
-    });
-
-    socket.on("createEmail", (substance)=>{
-        console.log(`currently ${substance.name} just joined`);
-    });
+    // socket.emit("newEmail", {
+    //     "from": "peshotan irani",
+    //     subject: "cool bro"
+    // });
+    //
+    // socket.on("createEmail", (substance)=>{
+    //     console.log(`currently ${substance.name} just joined`);
+    // });
 
     //NEW MESSAGE AND CREATE MESSAGE
     // socket.emit("newMessageEvent", {
@@ -45,7 +59,7 @@ io.on("connection", function (socket) {
     socket.on("createMessageEvent", (message)=>{
         console.log(`${message.from} + "says " + ${message.text}` );
 
-        io.emit("newMessageEvent", {
+        socket.broadcast.emit("newMessageEvent", {
            from: message.from,
             text: message.text,
             createdAt: Date.now().toLocaleString()
