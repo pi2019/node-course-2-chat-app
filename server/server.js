@@ -6,8 +6,8 @@ const express = require("express"),
       app = express(),
       socketIO = require("socket.io"),
       server = http.createServer(app),
-      io = socketIO(server);
-
+      io = socketIO(server),
+      {generateMessage} = require("./utils/message.js");
 
 let numberOfUsers = 0;
 
@@ -18,25 +18,29 @@ io.on("connection", function (socket) {
     numberOfUsers++;
     console.log(`currently there are ${numberOfUsers} users`);
 
+
+
     //server side EMITS newMessageEvent and client side EMITS createMessageEvent
 
+
+
+
     //WElCOME MESSAGE FROM SERVER to the user who just logged in
-    socket.emit("newMessageEvent", {
-        from: "admin",
-        text: "welcome"
-    });
+    socket.emit("newMessageEvent", generateMessage("admin","welcome to the chat room"));
+
+
 
     //WElCOME MESSAGE FROM SERVER to all the other users notifying them that a new user has connected
-    socket.broadcast.emit("newMessageEvent", {
-        from: "Admin",
-        text: "A new user just joined"
-    });
+    socket.broadcast.emit("newMessageEvent", generateMessage("admin", "A new user just joined"));
 
     socket.on("disconnect", function () {
         console.log("User disconnected from server");
         numberOfUsers--;
         console.log(`currently there are ${numberOfUsers} users`);
     });
+
+
+
 
     //new EMAIL EVENTS
     // socket.emit("newEmail", {
@@ -47,6 +51,10 @@ io.on("connection", function (socket) {
     // socket.on("createEmail", (substance)=>{
     //     console.log(`currently ${substance.name} just joined`);
     // });
+
+
+
+
 
     //NEW MESSAGE AND CREATE MESSAGE
     // socket.emit("newMessageEvent", {
@@ -59,12 +67,7 @@ io.on("connection", function (socket) {
     socket.on("createMessageEvent", (message)=>{
         console.log(`${message.from} + "says " + ${message.text}` );
 
-        socket.broadcast.emit("newMessageEvent", {
-           from: message.from,
-            text: message.text,
-            createdAt: Date.now().toLocaleString()
-
-        }) // this is to emit a message from one user to all users
+        io.emit("newMessageEvent", generateMessage(message.from, message.text)) // this is to emit a message to all users
     });
 });
 
