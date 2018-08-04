@@ -24,6 +24,7 @@ io.on("connection", function (socket) {
         console.log(`currently there are ${numberOfUsers} users`);
     });
 
+    //new EMAIL EVENTS
     socket.emit("newEmail", {
         "from": "peshotan irani",
         subject: "cool bro"
@@ -33,17 +34,23 @@ io.on("connection", function (socket) {
         console.log(`currently ${substance.name} just joined`);
     });
 
-    socket.emit("newMessageEvent", {
-        from: "Peshotan Irani",
-        text: "good morning folks, how is everyone???",
-        createdAt: Date.now().toLocaleString()
-        }
-    );
+    //NEW MESSAGE AND CREATE MESSAGE
+    // socket.emit("newMessageEvent", {
+    //     from: "Peshotan Irani",
+    //     text: "good morning folks, how is everyone???",
+    //     createdAt: Date.now().toLocaleString()
+    //     }
+    // );
 
     socket.on("createMessageEvent", (message)=>{
         console.log(`${message.from} + "says " + ${message.text}` );
 
-        socket.emit("newMessageEvent", message) // this is to emit a message from one user to all users
+        io.emit("newMessageEvent", {
+           from: message.from,
+            text: message.text,
+            createdAt: Date.now().toLocaleString()
+
+        }) // this is to emit a message from one user to all users
     });
 });
 
