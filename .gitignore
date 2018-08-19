@@ -1,3 +1,6 @@
 node_modules/
 package-lock.json
 .gitignore
+.DS_Store
+playground/
+public/.DS_Store
